@@ -106,10 +106,8 @@ contract Soulmate is ERC721 {
     /// @notice Allows any soulmates with the same NFT ID to write in a shared space on blockchain.
     /// @param message The message to write in the shared space.
     function writeMessageInSharedSpace(string calldata message) external {
-        uint256 id = ownerToId[msg.sender];
-        if (id == 0) revert Soulmate__UserNotFoundInContract();
-
-        if (soulmateOf[msg.sender] == address(0)) revert Soulmate__StillSearchingForSoulmate();
+        checkIfSenderFound();
+        checkIfSoulmateFound();
 
         sharedSpace[id] = message;
         emit MessageWrittenInSharedSpace(id, message);
@@ -117,6 +115,9 @@ contract Soulmate is ERC721 {
 
     /// @notice Allows any soulmates with the same NFT ID to read in a shared space on blockchain.
     function readMessageInSharedSpace() external view returns (string memory) {
+        checkIfSenderFound();
+        checkIfSoulmateFound();
+
         // Add a little touch of romantism
         return
             string.concat(
@@ -128,6 +129,9 @@ contract Soulmate is ERC721 {
 
     /// @notice Cancel possibily for 2 lovers to collect LoveToken from the airdrop.
     function getDivorced() public {
+        checkIfSenderFound();
+        checkIfSoulmateFound();
+
         address soulmate2 = soulmateOf[msg.sender];
         divorced[msg.sender] = true;
         divorced[soulmateOf[msg.sender]] = true;
@@ -135,6 +139,9 @@ contract Soulmate is ERC721 {
     }
 
     function isDivorced() public view returns (bool) {
+        checkIfSenderFound();
+        checkIfSoulmateFound();
+
         return divorced[msg.sender];
     }
 
@@ -144,5 +151,13 @@ contract Soulmate is ERC721 {
 
     function totalSouls() external view returns (uint256) {
         return (nextID - 1) * 2;
+    }
+
+    function checkIfSenderFound() public view {
+        if (ownerToId[msg.sender] == 0) revert Soulmate__UserNotFoundInContract();
+    }
+
+    function checkIfSoulmateFound() public view {
+        if (soulmateOf[msg.sender] == address(0)) revert Soulmate__StillSearchingForSoulmate();
     }
 }
