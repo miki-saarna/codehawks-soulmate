@@ -29,7 +29,7 @@ contract Soulmate is ERC721 {
 
     mapping(uint256 id => string) public sharedSpace;
 
-    uint256 private nextID;
+    uint256 private nextID = 1;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -133,10 +133,10 @@ contract Soulmate is ERC721 {
     }
 
     function totalSupply() external view returns (uint256) {
-        return nextID;
+        return nextID - 1;
     }
 
     function totalSouls() external view returns (uint256) {
-        return nextID * 2;
+        return (nextID - 1) * 2;
     }
 }
