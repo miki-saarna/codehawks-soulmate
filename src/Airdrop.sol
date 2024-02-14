@@ -11,8 +11,6 @@ contract Airdrop {
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
     //////////////////////////////////////////////////////////////*/
-    error Airdrop__UserNotFoundInSoulmateContract();
-    error Airdrop__StillSearchingForSoulmate();
     error Airdrop__CoupleIsDivorced();
     error Airdrop__PreviousTokenAlreadyClaimed();
 
@@ -54,10 +52,8 @@ contract Airdrop {
         // No LoveToken for people who don't love their soulmates anymore.
         if (soulmateContract.isDivorced()) revert Airdrop__CoupleIsDivorced();
 
-        uint256 id = soulmateContract.ownerToId(msg.sender);
-        if (id == 0) revert Airdrop__UserNotFoundInSoulmateContract();
-
-        if (soulmateContract.soulmateOf(msg.sender) == address(0)) revert Airdrop__StillSearchingForSoulmate();
+        soulmateContract.checkIfSenderFound();
+        soulmateContract.checkIfSoulmateFound();
 
         // Calculating since how long soulmates are reunited
         uint256 numberOfDaysInCouple = (block.timestamp -
