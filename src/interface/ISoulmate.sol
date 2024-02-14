@@ -30,4 +30,8 @@ interface ISoulmate {
     function totalSupply() external view returns (uint256);
 
     function totalSouls() external view returns (uint256);
+
+    function checkIfSenderFound() external view;
+    
+    function checkIfSoulmateFound() external view;
 }
