@@ -71,6 +71,8 @@ contract Staking {
         soulmateContract.checkIfSenderFound();
         soulmateContract.checkIfSoulmateFound(); // not having these 2 pieces of validation would result in msg.sender claiming a massive value of block.timestamp / 1 weeks
 
+        uint256 soulmateId = soulmateContract.ownerToId(msg.sender);
+
         // first claim
         if (lastClaim[msg.sender] == 0) {
             lastClaim[msg.sender] = soulmateContract.idToCreationTimestamp(
