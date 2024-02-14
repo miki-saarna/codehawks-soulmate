@@ -15,6 +15,7 @@ contract Soulmate is ERC721 {
     error Soulmate__SoulboundTokenCannotBeTransfered();
     error Soulmate__UserNotFoundInContract();
     error Soulmate__StillSearchingForSoulmate();
+    error Soulmate__isDivorced();
 
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
@@ -109,6 +110,8 @@ contract Soulmate is ERC721 {
         checkIfSenderFound();
         checkIfSoulmateFound();
 
+        if (isDivorced()) revert Soulmate__isDivorced();
+
         sharedSpace[id] = message;
         emit MessageWrittenInSharedSpace(id, message);
     }
@@ -131,6 +134,8 @@ contract Soulmate is ERC721 {
     function getDivorced() public {
         checkIfSenderFound();
         checkIfSoulmateFound();
+
+        if (isDivorced()) revert Soulmate__isDivorced();
 
         address soulmate2 = soulmateOf[msg.sender];
         divorced[msg.sender] = true;
