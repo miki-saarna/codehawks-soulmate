@@ -13,6 +13,8 @@ contract Soulmate is ERC721 {
 
     error Soulmate__alreadyHaveASoulmate(address soulmate);
     error Soulmate__SoulboundTokenCannotBeTransfered();
+    error Soulmate__UserNotFoundInContract();
+    error Soulmate__StillSearchingForSoulmate();
 
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
@@ -105,6 +107,10 @@ contract Soulmate is ERC721 {
     /// @param message The message to write in the shared space.
     function writeMessageInSharedSpace(string calldata message) external {
         uint256 id = ownerToId[msg.sender];
+        if (id == 0) revert Soulmate__UserNotFoundInContract();
+
+        if (soulmateOf[msg.sender] == address(0)) revert Soulmate__StillSearchingForSoulmate();
+
         sharedSpace[id] = message;
         emit MessageWrittenInSharedSpace(id, message);
     }
