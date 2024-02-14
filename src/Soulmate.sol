@@ -112,6 +112,7 @@ contract Soulmate is ERC721 {
 
         if (isDivorced()) revert Soulmate__isDivorced();
 
+        uint256 id = ownerToId[msg.sender];
         sharedSpace[id] = message;
         emit MessageWrittenInSharedSpace(id, message);
     }
