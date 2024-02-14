@@ -11,8 +11,6 @@ contract Staking {
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
     //////////////////////////////////////////////////////////////*/
-    error Airdrop__UserNotFoundInSoulmateContract();
-    error Airdrop__StillSearchingForSoulmate();
     error Staking__NoMoreRewards();
     error Staking__StakingPeriodTooShort();
 
@@ -70,10 +68,8 @@ contract Staking {
     /// @notice Claim rewards for staking.
     /// @notice Users can claim 1 token per staking token per week.
     function claimRewards() public {
-        uint256 soulmateId = soulmateContract.ownerToId(msg.sender);
-        if (id == 0) revert Airdrop__UserNotFoundInSoulmateContract();
-
-        if (soulmateContract.soulmateOf(msg.sender) == address(0)) revert Airdrop__StillSearchingForSoulmate(); // not having this validation would result in msg.sender claiming a massive value of block.timestamp / 1 weeks
+        soulmateContract.checkIfSenderFound();
+        soulmateContract.checkIfSoulmateFound(); // not having these 2 pieces of validation would result in msg.sender claiming a massive value of block.timestamp / 1 weeks
 
         // first claim
         if (lastClaim[msg.sender] == 0) {
