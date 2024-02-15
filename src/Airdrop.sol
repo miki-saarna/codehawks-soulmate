@@ -13,6 +13,7 @@ contract Airdrop {
     //////////////////////////////////////////////////////////////*/
     error Airdrop__CoupleIsDivorced();
     error Airdrop__PreviousTokenAlreadyClaimed();
+    error Airdrop__VaultIsEmpty();
 
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
@@ -55,6 +56,9 @@ contract Airdrop {
         // No LoveToken for people who don't love their soulmates anymore.
         if (soulmateContract.isDivorced()) revert Airdrop__CoupleIsDivorced();
 
+        uint256 airdropVaultBalance = loveToken.balanceOf(address(airdropVault));
+        if (airdropVaultBalance == 0) revert Airdrop__VaultIsEmpty();
+
         // Calculating since how long soulmates are reunited
         uint256 numberOfDaysInCouple = (block.timestamp -
             soulmateContract.idToCreationTimestamp(
@@ -73,12 +77,9 @@ contract Airdrop {
 
         // Dust collector
         if (
-            tokenAmountToDistribute >=
-            loveToken.balanceOf(address(airdropVault))
+            tokenAmountToDistribute >= airdropVaultBalance
         ) {
-            tokenAmountToDistribute = loveToken.balanceOf(
-                address(airdropVault)
-            );
+            tokenAmountToDistribute = airdropVaultBalance
         }
         _claimedBy[msg.sender] += tokenAmountToDistribute;
 
