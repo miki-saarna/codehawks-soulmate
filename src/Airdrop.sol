@@ -49,11 +49,11 @@ contract Airdrop {
 
     /// @notice Claim tokens. Every person who have a Soulmate NFT token can claim 1 LoveToken per day.
     function claim() public {
-        // No LoveToken for people who don't love their soulmates anymore.
-        if (soulmateContract.isDivorced()) revert Airdrop__CoupleIsDivorced();
-
         soulmateContract.checkIfSenderFound();
         soulmateContract.checkIfSoulmateFound();
+
+        // No LoveToken for people who don't love their soulmates anymore.
+        if (soulmateContract.isDivorced()) revert Airdrop__CoupleIsDivorced();
 
         // Calculating since how long soulmates are reunited
         uint256 numberOfDaysInCouple = (block.timestamp -
