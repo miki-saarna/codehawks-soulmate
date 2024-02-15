@@ -13,6 +13,7 @@ contract Staking {
     //////////////////////////////////////////////////////////////*/
     error Staking__NoMoreRewards();
     error Staking__StakingPeriodTooShort();
+    error Staking__NotEnoughRewards();
 
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
@@ -71,6 +72,9 @@ contract Staking {
         soulmateContract.checkIfSenderFound();
         soulmateContract.checkIfSoulmateFound(); // not having these 2 pieces of validation would result in msg.sender claiming a massive value of block.timestamp / 1 weeks
 
+        uint256 stakingVaultBalance = loveToken.balanceOf(address(stakingVault));
+        if (stakingVaultBalance == 0) revert Staking__NoMoreRewards();
+
         uint256 soulmateId = soulmateContract.ownerToId(msg.sender);
 
         // first claim
@@ -88,11 +92,16 @@ contract Staking {
         if (timeInWeeksSinceLastClaim < 1)
             revert Staking__StakingPeriodTooShort();
 
+        // Send the same amount of LoveToken as the week waited times the number of token staked
+        uint256 amountToClaim = userStakes[msg.sender] * timeInWeeksSinceLastClaim;
+
+        // Dust collector
+        if (amountToClaim > stakingVaultBalance) {
+            revert Staking__NotEnoughRewards();
+        }
+
         lastClaim[msg.sender] = block.timestamp;
 
-        // Send the same amount of LoveToken as the week waited times the number of token staked
-        uint256 amountToClaim = userStakes[msg.sender] *
-            timeInWeeksSinceLastClaim;
         loveToken.transferFrom(
             address(stakingVault),
             msg.sender,
