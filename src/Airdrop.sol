@@ -79,7 +79,7 @@ contract Airdrop {
         if (
             tokenAmountToDistribute >= airdropVaultBalance
         ) {
-            tokenAmountToDistribute = airdropVaultBalance
+            tokenAmountToDistribute = airdropVaultBalance;
         }
         _claimedBy[msg.sender] += tokenAmountToDistribute;
 
