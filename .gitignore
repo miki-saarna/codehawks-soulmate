@@ -13,6 +13,7 @@ hardhat.config.js
 
 # Docs
 docs/
+README_fixes.md
 
 # Dotenv file
 .env
